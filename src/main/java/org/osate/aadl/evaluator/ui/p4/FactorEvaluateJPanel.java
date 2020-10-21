@@ -2,12 +2,14 @@ package org.osate.aadl.evaluator.ui.p4;
 
 import fluent.gui.impl.swing.FluentTable;
 import fluent.gui.table.CustomTableColumn;
-import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import javax.swing.SwingUtilities;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import org.osate.aadl.aadlevaluator.report.EvolutionReport;
 import org.osate.aadl.aadlevaluator.report.ProjectReport;
 import org.osate.aadl.aadlevaluator.report.ReportFactor;
@@ -54,14 +56,39 @@ public class FactorEvaluateJPanel extends javax.swing.JPanel
             }
         });
         
-        table.addColumn( new CustomTableColumn<EvolutionReport,BigDecimal>( "Rank" , 50 ){
+        table.addColumn( new CustomTableColumn<EvolutionReport,Double>( "Rank" , 50 ){
             @Override
-            public BigDecimal getValue( int index , EvolutionReport report ) {
-                return report.getFactor();
+            public Double getValue( int index , EvolutionReport report ) {
+                return report.getFactor().doubleValue();
             }
         });
         
         table.setUp();
+        
+        // ------- //
+        
+        SwingUtilities.invokeLater( new Runnable() {
+            @Override
+            public void run() {
+                TableRowSorter<TableModel> sorter = new TableRowSorter<>( table.getModel() );
+                sorter.setComparator( 0 , new Comparator<String>() {
+                    @Override
+                    public int compare( String name1 , String name2 ) {
+                        System.out.println( "Ordenando..." );
+                        return getNumber( name1 ) - getNumber( name2 );
+                    }
+
+                    private int getNumber( String name ){
+                        if( name == null && !name.contains( " " ) ) return 0;
+
+                        String value = name.substring( name.lastIndexOf( " " ) + 1 );
+                        if( value == null || name.trim().isEmpty() ) return 0;
+
+                        return Integer.parseInt( name );
+                    }
+                });
+            }
+        });
         
         SwingUtilities.invokeLater( new Runnable() {
             @Override
