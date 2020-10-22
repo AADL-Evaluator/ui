@@ -54,6 +54,20 @@ public class FactorEvaluateJPanel extends javax.swing.JPanel
             public String getValue( int index , EvolutionReport report ) {
                 return "Change " + (index + 1);
             }
+
+            @Override
+            public int compare( String o1 , String o2 ) {
+                return getNumber( o1 ) - getNumber( o2 );
+            }
+            
+            private int getNumber( String name ){
+                if( name == null && !name.contains( " " ) ) return 0;
+
+                String value = name.substring( name.lastIndexOf( " " ) + 1 );
+                if( value == null || name.trim().isEmpty() ) return 0;
+
+                return Integer.parseInt( value );
+            }
         });
         
         table.addColumn( new CustomTableColumn<EvolutionReport,Double>( "Rank" , 50 ){
@@ -65,36 +79,14 @@ public class FactorEvaluateJPanel extends javax.swing.JPanel
         
         table.setUp();
         
-        // ------- //
-        
-        SwingUtilities.invokeLater( new Runnable() {
-            @Override
-            public void run() {
-                TableRowSorter<TableModel> sorter = new TableRowSorter<>( table.getModel() );
-                sorter.setComparator( 0 , new Comparator<String>() {
-                    @Override
-                    public int compare( String name1 , String name2 ) {
-                        System.out.println( "Ordenando..." );
-                        return getNumber( name1 ) - getNumber( name2 );
-                    }
-
-                    private int getNumber( String name ){
-                        if( name == null && !name.contains( " " ) ) return 0;
-
-                        String value = name.substring( name.lastIndexOf( " " ) + 1 );
-                        if( value == null || name.trim().isEmpty() ) return 0;
-
-                        return Integer.parseInt( name );
-                    }
-                });
-            }
-        });
-        
         SwingUtilities.invokeLater( new Runnable() {
             @Override
             public void run() {
                 table.setTabelaVaziaMensagem( "No change." );
                 table.setTabelaVazia();
+                
+                table.getRowSorter().toggleSortOrder( 1 );
+                table.getRowSorter().toggleSortOrder( 1 );
             }
         } );
     }

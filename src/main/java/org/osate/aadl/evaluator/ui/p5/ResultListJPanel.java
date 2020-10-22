@@ -2,10 +2,10 @@ package org.osate.aadl.evaluator.ui.p5;
 
 import fluent.gui.impl.swing.FluentTable;
 import fluent.gui.table.CustomTableColumn;
-import fluent.gui.table.FieldTableColumn;
 import java.math.BigDecimal;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -105,9 +105,23 @@ public class ResultListJPanel extends javax.swing.JPanel
                 
                 EvolutionReport original = getProjectReport().getReports().get( "original" );
                 
-                executor.execute( new AadlDetailsRunnable( detailsJTextArea  , report.getEvolution() ) );
-                executor.execute( new AadlComponentRunnable( changeJTextArea , report.getEvolution() ) );
-                executor.execute( new AnalysisRunnable( analysisTable , original , report ) );
+                try
+                {
+                    executor.execute( new AadlDetailsRunnable( detailsJTextArea  , report.getEvolution() ) );
+                    executor.execute( new AnalysisRunnable( analysisTable , original , report ) );
+                    executor.execute( new AadlComponentRunnable( changeJTextArea , report.getEvolution() ) );
+                }
+                catch( Exception err )
+                {
+                    err.printStackTrace();
+                    
+                    JOptionPane.showMessageDialog( 
+                        jSplitPane1 , 
+                        err.getMessage() , 
+                        "Error on ADDL Detalis" ,
+                        JOptionPane.ERROR_MESSAGE
+                    );
+                }
             }
         });
         

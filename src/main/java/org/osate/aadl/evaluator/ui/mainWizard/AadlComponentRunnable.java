@@ -17,11 +17,11 @@ public class AadlComponentRunnable implements Runnable
         this.system = system;
     }
 
-    public AadlComponentRunnable( JTextArea area , Evolution evolution )
+    public AadlComponentRunnable( JTextArea area , Evolution evolution ) throws Exception
     {
         this.area = area;
         this.evolution = evolution;
-        this.system = evolution == null ? null : evolution.getSystem();
+        this.system = evolution == null ? null : evolution.getSystemWidthChanges();
     }
     
     @Override
