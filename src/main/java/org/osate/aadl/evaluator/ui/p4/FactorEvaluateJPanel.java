@@ -2,14 +2,15 @@ package org.osate.aadl.evaluator.ui.p4;
 
 import fluent.gui.impl.swing.FluentTable;
 import fluent.gui.table.CustomTableColumn;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import org.osate.aadl.aadlevaluator.report.EvolutionReport;
 import org.osate.aadl.aadlevaluator.report.ProjectReport;
 import org.osate.aadl.aadlevaluator.report.ReportFactor;
@@ -18,6 +19,8 @@ import org.osate.aadl.aadlevaluator.report.util.ResumeUtils;
 
 public class FactorEvaluateJPanel extends javax.swing.JPanel 
 {
+    private static final Logger LOG = Logger.getLogger( FactorEvaluateJPanel.class.getName() );
+    
     private final Executor executor = Executors.newSingleThreadExecutor();
     
     private ProjectReport projectReport;
@@ -41,7 +44,10 @@ public class FactorEvaluateJPanel extends javax.swing.JPanel
             factorListJPanel = new FactorListJPanel(){
                 @Override
                 public void save( final EvolutionReport resume , final Collection<ReportFactor> factors ) {
+                    LOG.log( Level.INFO , "Save the scores..." );
                     projectReport.setResume( resume );
+                    
+                    LOG.log( Level.INFO , "Apllying score to each evolution..." );
                     ResumeUtils.caculate( projectReport );
                     
                     table.getTabelModel().fireTableDataChanged();
@@ -52,7 +58,7 @@ public class FactorEvaluateJPanel extends javax.swing.JPanel
         table.addColumn( new CustomTableColumn<EvolutionReport,String>( "Change #" , 50 ){
             @Override
             public String getValue( int index , EvolutionReport report ) {
-                return "Change " + (index + 1);
+                return report.getName();
             }
 
             @Override
@@ -70,10 +76,11 @@ public class FactorEvaluateJPanel extends javax.swing.JPanel
             }
         });
         
-        table.addColumn( new CustomTableColumn<EvolutionReport,Double>( "Rank" , 50 ){
+        table.addColumn( new CustomTableColumn<EvolutionReport,BigDecimal>( "Rank" , 50 ){
             @Override
-            public Double getValue( int index , EvolutionReport report ) {
-                return report.getFactor().doubleValue();
+            public BigDecimal getValue( int index , EvolutionReport report ) {
+                return report.getFactor()
+                        .setScale( 20 , RoundingMode.HALF_UP );
             }
         });
         

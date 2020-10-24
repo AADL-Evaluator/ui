@@ -20,7 +20,7 @@ import org.osate.aadl.evaluator.ui.mainWizard.AadlDetailsRunnable;
 
 public abstract class EvolutionListJPanel extends javax.swing.JPanel 
 {
-    private static final String EVOLUTION_NAME = "Evolution_{0}";
+    private static final String EVOLUTION_NAME = "Change {0}";
     
     private final Executor executor = Executors.newSingleThreadExecutor();
     
