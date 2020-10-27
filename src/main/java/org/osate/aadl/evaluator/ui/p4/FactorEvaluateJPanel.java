@@ -80,7 +80,7 @@ public class FactorEvaluateJPanel extends javax.swing.JPanel
             @Override
             public BigDecimal getValue( int index , EvolutionReport report ) {
                 return report.getFactor()
-                        .setScale( 20 , RoundingMode.HALF_UP );
+                        .setScale( 5 , RoundingMode.HALF_UP );
             }
         });
         
