@@ -3,18 +3,18 @@ package org.osate.aadl.evaluator.ui.p5;
 import fluent.gui.impl.swing.FluentTable;
 import fluent.gui.table.CustomTableColumn;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.osate.aadl.aadlevaluator.analysis.Analysis;
 import org.osate.aadl.aadlevaluator.report.EvolutionReport;
 import org.osate.aadl.aadlevaluator.report.ProjectReport;
+import org.osate.aadl.aadlevaluator.report.comparation.ComparationReport;
 import org.osate.aadl.evaluator.ui.mainWizard.AadlComponentRunnable;
 import org.osate.aadl.evaluator.ui.mainWizard.AadlDetailsRunnable;
-import org.osate.aadl.evaluator.ui.mainWizard.AnalysisRunnable;
 
 public class ResultListJPanel extends javax.swing.JPanel 
 {
@@ -23,7 +23,7 @@ public class ResultListJPanel extends javax.swing.JPanel
     private ProjectReport projectReport;
     
     private FluentTable<EvolutionReport> reportJable;
-    private FluentTable<Analysis> analysisTable;
+    private FluentTable<ComparationReport> analysisTable;
     
     public ResultListJPanel() 
     {
@@ -33,37 +33,60 @@ public class ResultListJPanel extends javax.swing.JPanel
     
     private void init()
     {
-        jScrollPane1.setViewportView(reportJable = new FluentTable<>( "changes" )
-        );
-        
         analysisJScrollPane.setViewportView( 
             analysisTable = new FluentTable<>( "analysis" )
         );
         
-        analysisTable.addColumn( new CustomTableColumn<Analysis,String>( "Characteristic" ){
+        analysisTable.addColumn( new CustomTableColumn<ComparationReport,String>( "Characteristic" , 10 ){
             @Override
-            public String getValue( Analysis analysis ) {
+            public String getValue( ComparationReport analysis ) {
                 return analysis.getCharacteristic();
             }
         });
         
-        analysisTable.addColumn( new CustomTableColumn<Analysis,String>( "Sub" ){
+        analysisTable.addColumn( new CustomTableColumn<ComparationReport,String>( "Attribute" , 10 ){
             @Override
-            public String getValue( Analysis analysis ) {
-                return analysis.getSubcharacteristic();
+            public String getValue( ComparationReport analysis ) {
+                return analysis.getAttribute();
             }
         } );
         
-        analysisTable.addColumn( new CustomTableColumn<Analysis,String>( "Result" ){
+        analysisTable.addColumn( new CustomTableColumn<ComparationReport,Object>( "Orignal" , 10 ){
             @Override
-            public String getValue( Analysis analysis ) {
-                return analysis.toString();
+            public Object getValue( ComparationReport analysis ) {
+                return analysis.getValueOriginal();
+            }
+        } );
+        
+        analysisTable.addColumn( new CustomTableColumn<ComparationReport,Object>( "Evolution" , 10 ){
+            @Override
+            public Object getValue( ComparationReport analysis ) {
+                return analysis.getValueEvolution();
+            }
+        } );
+        
+        analysisTable.addColumn( new CustomTableColumn<ComparationReport,String>( "Result" ){
+            @Override
+            public String getValue( ComparationReport analysis ) {
+                return analysis.getResult();
             }
         });
         
         analysisTable.setUp();
         
+        SwingUtilities.invokeLater( new Runnable() {
+            @Override
+            public void run() {
+                analysisTable.setTabelaVaziaMensagem( "There is no analyse." );
+                analysisTable.setTabelaVazia();
+            }
+        });
+        
         // --------------------- //
+        
+        jScrollPane1.setViewportView(
+            reportJable = new FluentTable<>( "changes" )
+        );
         
         reportJable.addColumn( new CustomTableColumn<EvolutionReport,String>( "Change #" , 50 ){
             @Override
@@ -75,7 +98,7 @@ public class ResultListJPanel extends javax.swing.JPanel
         reportJable.addColumn( new CustomTableColumn<EvolutionReport,BigDecimal>( "Factor" , 50 ){
             @Override
             public BigDecimal getValue( int index , EvolutionReport report ) {
-                return report.getFactor();
+                return report.getFactor( "total" ).setScale( 5 , RoundingMode.HALF_UP );
             }
         });
         
@@ -108,7 +131,7 @@ public class ResultListJPanel extends javax.swing.JPanel
                 try
                 {
                     executor.execute( new AadlDetailsRunnable( detailsJTextArea  , report.getEvolution() ) );
-                    executor.execute( new AnalysisRunnable( analysisTable , original , report ) );
+                    executor.execute( new ComparationReportRunnable( analysisTable , original , report ) );
                     executor.execute( new AadlComponentRunnable( changeJTextArea , report.getEvolution() ) );
                 }
                 catch( Exception err )
@@ -125,7 +148,7 @@ public class ResultListJPanel extends javax.swing.JPanel
             }
         });
         
-        reportJButton.addActionListener(new ReportActionListener( reportJable ){
+        reportJButton.addActionListener( new ReportActionListener( reportJable ){
             @Override
             public ProjectReport getProjectReport() {
                 return projectReport;

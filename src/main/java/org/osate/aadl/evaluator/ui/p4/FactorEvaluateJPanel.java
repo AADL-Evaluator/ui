@@ -79,7 +79,7 @@ public class FactorEvaluateJPanel extends javax.swing.JPanel
         table.addColumn( new CustomTableColumn<EvolutionReport,BigDecimal>( "Rank" , 50 ){
             @Override
             public BigDecimal getValue( int index , EvolutionReport report ) {
-                return report.getFactor()
+                return report.getFactor( "total" )
                         .setScale( 5 , RoundingMode.HALF_UP );
             }
         });

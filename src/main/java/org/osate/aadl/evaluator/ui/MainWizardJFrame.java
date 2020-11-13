@@ -36,7 +36,7 @@ public class MainWizardJFrame extends javax.swing.JFrame
         init();
         
         setTitle( "DevCompatibility" );     // titulo da tela
-        setSize( 800 , 600 );               // tamanho da tela
+        setSize( 1000 , 600 );              // tamanho da tela
         setLocationRelativeTo( null );      // tela centralizada
     }
     

@@ -1,10 +1,18 @@
-package org.osate.aadl.evaluator.ui.mainWizard;
+package org.osate.aadl.evaluator.ui.p5;
 
 import fluent.gui.impl.swing.FluentTable;
 import org.osate.aadl.aadlevaluator.analysis.Analysis;
 import org.osate.aadl.aadlevaluator.analysis.EvolutionAnalysis;
 import org.osate.aadl.aadlevaluator.report.EvolutionReport;
 
+/**
+ * Em vez de utilizar essa classe, deve-se usar o ComparationReportRunnable.
+ * 
+ * 
+ * @author avld
+ * @deprecated
+ */
+@Deprecated
 public class AnalysisRunnable implements Runnable
 {
     private final FluentTable<Analysis> table;
