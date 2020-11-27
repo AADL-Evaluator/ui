@@ -112,7 +112,15 @@ public abstract class EvolutionListJPanel extends javax.swing.JPanel
             public void run() {
                 try
                 {
-                    EvolutionReport report = ProjectReportUtils.create( createEvolutionName() , evolution );
+                    int number = ++counter;
+                    
+                    System.out.println( "Creating evolution " + createEvolutionName( number ) );
+                    
+                    EvolutionReport report = ProjectReportUtils.create( 
+                        createEvolutionName( number ) , 
+                        evolution 
+                    );
+                    
                     System.out.println( report.toString() );
                     
                     projectReport.add( report );
@@ -137,7 +145,15 @@ public abstract class EvolutionListJPanel extends javax.swing.JPanel
                 public void run() {
                     try
                     {
-                        EvolutionReport report = ProjectReportUtils.create( createEvolutionName() , evolution );
+                        int number = ++counter;
+                        
+                        System.out.println( "Creating the " + createEvolutionName( number ) );
+                        
+                        EvolutionReport report = ProjectReportUtils.create( 
+                            createEvolutionName( number ) , 
+                            evolution 
+                        );
+                        
                         System.out.println( report.toString() );
 
                         projectReport.add( report );
@@ -184,9 +200,9 @@ public abstract class EvolutionListJPanel extends javax.swing.JPanel
         return table;
     }
     
-    private String createEvolutionName()
+    private String createEvolutionName( int number )
     {
-        return MessageFormat.format( EVOLUTION_NAME , counter++ );
+        return MessageFormat.format( EVOLUTION_NAME , number );
     }
     
     public abstract void proximaPagina();
